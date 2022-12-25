@@ -10,6 +10,7 @@ class Registration extends StatelessWidget {
   final emailRegister_controller = TextEditingController();
   final passwordRegister_controller = TextEditingController();
   final Displayname_controller = TextEditingController();
+  final PhoneNumber_controller = TextEditingController();
   Future signup() async {
     try {
       await FirebaseAuth.instance
@@ -56,6 +57,10 @@ class Registration extends StatelessWidget {
                     height: 30,
                   ),
                   Field(Displayname_controller, context, "Display Name"),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Field(PhoneNumber_controller, context, "phone Number"),
                   SizedBox(
                     height: 30,
                   ),

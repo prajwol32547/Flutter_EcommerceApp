@@ -18,7 +18,7 @@ class Userprofile extends StatelessWidget {
           pinned: true,
           expandedHeight: 200,
           flexibleSpace: FlexibleSpaceBar(
-            title: Text(Dname!),
+            title: Dname != null ? Text(Dname!) : Text("Null"),
           ),
         ),
         SliverToBoxAdapter(
@@ -28,8 +28,13 @@ class Userprofile extends StatelessWidget {
             children: [
               userListModel(
                   "Edit profile", Icons.person, () => Get.to(user_form())),
-              userListModel(
-                  "My orders", Icons.shop, () => Get.to(productDisplay())),
+              userListModel("My orders", Icons.shop, () {
+                try {
+                  Get.to(productDisplay());
+                } on Exception catch (_, e) {
+                  printError();
+                }
+              }),
               userListModel("payments history", Icons.settings,
                   () => Get.to(productDisplay())),
               userListModel("", Icons.settings, () => Get.to(productDisplay())),

@@ -22,12 +22,12 @@ class productDisplay extends StatelessWidget {
             flexibleSpace: Padding(
               padding: const EdgeInsets.all(10.0),
               child: FlexibleSpaceBar(
-                  background: data[1] == null
+                  background: data == null
                       ? Image.network(
                           "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
                           fit: BoxFit.contain,
                         )
-                      : Image.network(data[1])),
+                      : Image.network(data![1])),
             ),
             // title: data[0] == null ? Text("hy") : Text(data[0]),
           ),
@@ -38,11 +38,15 @@ class productDisplay extends StatelessWidget {
                 Container(
                     height: 100,
                     width: MediaQuery.of(context).size.width,
-                    child: Text("name:${data[0]}")),
+                    child: data != null
+                        ? Text("name:${data![0]}")
+                        : Text("Null value")),
                 Container(
                     height: 100,
                     width: MediaQuery.of(context).size.width,
-                    child: Text("price:${data[2]}")),
+                    child: data != null
+                        ? Text("price:${data![2]}")
+                        : Text("Null value")),
                 Container(
                     height: 100,
                     width: MediaQuery.of(context).size.width,
