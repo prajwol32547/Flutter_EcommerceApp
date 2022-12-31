@@ -11,6 +11,17 @@ class cart extends StatelessWidget {
       .collection('cart')
       .where('uid', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots();
+
+  int amount = 0;
+
+  sum() {
+    FirebaseFirestore.instance.collection('cart').get().then((value) => {
+          value.docs.forEach((element) {
+            print(element.data().toString());
+          })
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +53,7 @@ class cart extends StatelessWidget {
                       );
                     }
                     final cartData = snapshot.requireData;
+
                     return ListView.builder(
                         itemCount: cartData.size,
                         itemBuilder: (BuildContext context, int index) {
@@ -71,12 +83,6 @@ class cart extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                Row(children: [
-                                  Btn(c.increase, Icons.add),
-                                  Obx(() =>
-                                      Text("${c.count.value.toString()}")),
-                                  Btn(c.decrement, Icons.remove)
-                                ]),
                                 InkWell(
                                   onTap: (() =>
                                       delete(cartData.docs[index].id)),
@@ -98,8 +104,12 @@ class cart extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text("Total amount : 1322"),
-                  TextButton(onPressed: () {}, child: Text("Checkout"))
+                  Text("Total amount : ${amount}"),
+                  TextButton(
+                      onPressed: () {
+                        sum();
+                      },
+                      child: Text("Checkout"))
                 ],
               ),
             ),

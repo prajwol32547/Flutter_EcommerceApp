@@ -8,6 +8,7 @@ import 'package:prajwol/userListModel.dart';
 class Userprofile extends StatelessWidget {
   final user = FirebaseAuth.instance.currentUser?.uid;
   final Dname = FirebaseAuth.instance.currentUser?.displayName;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +38,8 @@ class Userprofile extends StatelessWidget {
               }),
               userListModel("payments history", Icons.settings,
                   () => Get.to(productDisplay())),
-              userListModel("", Icons.settings, () => Get.to(productDisplay())),
+              // userListModel("Upload Product", Icons.add_shopping_cart_rounded,
+              //     () => Get.toNamed("/uploadProduct")),
               userListModel("Edit profile", Icons.settings,
                   () => Get.to(productDisplay()))
             ],

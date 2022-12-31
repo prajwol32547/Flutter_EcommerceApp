@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:prajwol/add_product_controller.dart';
+import 'package:prajwol/isAdmin.dart';
 import 'product_display.dart';
 
 class catalogue extends StatefulWidget {
@@ -12,6 +13,7 @@ class catalogue extends StatefulWidget {
 }
 
 class _catalogueState extends State<catalogue> with TickerProviderStateMixin {
+  final userToken = FirebaseAuth.instance.currentUser?.uid;
   final addProductController a = Get.put(addProductController());
   final Stream<QuerySnapshot> cycle =
       FirebaseFirestore.instance.collection('Cycle').snapshots();
@@ -19,6 +21,21 @@ class _catalogueState extends State<catalogue> with TickerProviderStateMixin {
       FirebaseFirestore.instance.collection('Budho').snapshots();
   final Stream<QuerySnapshot> sports =
       FirebaseFirestore.instance.collection('sports').snapshots();
+
+  void deletecycle(id) {
+    FirebaseFirestore.instance.collection('Cycle').doc(id).delete();
+    print("deleted");
+  }
+
+  void deletebudho(id) {
+    FirebaseFirestore.instance.collection('Budho').doc(id).delete();
+    print("deleted");
+  }
+
+  void deletesports(id) {
+    FirebaseFirestore.instance.collection('sports').doc(id).delete();
+    print("deleted");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,10 +99,11 @@ class _catalogueState extends State<catalogue> with TickerProviderStateMixin {
                           final String img = data.docs[index]['image'];
                           final String name = data.docs[index]['name'];
                           final int price = data.docs[index]['price'];
+                          final String desc = data.docs[index]['Description'];
                           // print(img);
                           return InkWell(
                             onTap: () => Get.to(productDisplay(),
-                                arguments: [name, img, price]),
+                                arguments: [name, img, price, desc]),
                             child: SizedBox(
                               // height: 700,
                               // width: 500,
@@ -101,13 +119,25 @@ class _catalogueState extends State<catalogue> with TickerProviderStateMixin {
                                   ),
                                   Text(name),
                                   Text(price.toString()),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        a.addProduct(img, name, 1, price);
-                                        Get.snackbar("product added",
-                                            "please Check your cart");
-                                      },
-                                      child: Text("Add to cart")),
+                                  Row(
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            a.addProduct(img, name, 1, price);
+                                            Get.snackbar("product added",
+                                                "please Check your cart");
+                                          },
+                                          child: Text("Add to cart")),
+                                      if (isAdmin(userToken))
+                                        ElevatedButton(
+                                          child: Icon(Icons.delete,
+                                              color: Colors.red),
+                                          onPressed: () {
+                                            deletecycle(data.docs[index].id);
+                                          },
+                                        )
+                                    ],
+                                  ),
                                   SizedBox(
                                     height: 20,
                                   )
@@ -138,13 +168,14 @@ class _catalogueState extends State<catalogue> with TickerProviderStateMixin {
                         itemCount: data1.size,
                         itemBuilder: ((context, indexi) {
                           final String img1 = data1.docs[indexi]['image'];
-                          final String name1 = data1.docs[indexi]['name '];
+                          final String name1 = data1.docs[indexi]['name'];
                           final int price1 = data1.docs[indexi]['price'];
-
+                          final String Desc1 =
+                              data1.docs[indexi]['Description'];
                           // print(img);
                           return InkWell(
                             onTap: () => Get.to(productDisplay(),
-                                arguments: [name1, img1, price1]),
+                                arguments: [name1, img1, price1, Desc1]),
                             child: SizedBox(
                               // height: 700,
                               // width: 500,
@@ -160,13 +191,28 @@ class _catalogueState extends State<catalogue> with TickerProviderStateMixin {
                                   ),
                                   Text(name1),
                                   Text(price1.toString()),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        a.addProduct(img1, name1, 1, price1);
-                                        Get.snackbar("product added",
-                                            "please Check your cart");
-                                      },
-                                      child: Text("Add to cart")),
+                                  Row(
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            a.addProduct(
+                                                img1, name1, 1, price1);
+                                            Get.snackbar("product added",
+                                                "please Check your cart");
+                                          },
+                                          child: Text("Add to cart")),
+                                      if (isAdmin(userToken))
+                                        ElevatedButton(
+                                          child: Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            deletesports(data1.docs[indexi].id);
+                                          },
+                                        )
+                                    ],
+                                  ),
                                   SizedBox(
                                     height: 20,
                                   )
@@ -200,10 +246,11 @@ class _catalogueState extends State<catalogue> with TickerProviderStateMixin {
 
                           final String name2 = data2.docs[index]['name'];
                           final int price2 = data2.docs[index]['price'];
+                          final String Desc2 = data2.docs[index]['Description'];
                           // print(img);
                           return InkWell(
                             onTap: () => Get.to(productDisplay(),
-                                arguments: [name2, img2, price2]),
+                                arguments: [name2, img2, price2, Desc2]),
                             child: SizedBox(
                               // height: 700,
                               // width: 500,
@@ -219,13 +266,28 @@ class _catalogueState extends State<catalogue> with TickerProviderStateMixin {
                                   ),
                                   Text(name2),
                                   Text(price2.toString()),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        a.addProduct(img2, name2, 1, price2);
-                                        Get.snackbar("product added",
-                                            "please Check your cart");
-                                      },
-                                      child: Text("Add to cart")),
+                                  Row(
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            a.addProduct(
+                                                img2, name2, 1, price2);
+                                            Get.snackbar("product added",
+                                                "please Check your cart");
+                                          },
+                                          child: Text("Add to cart")),
+                                      if (isAdmin(userToken))
+                                        ElevatedButton(
+                                          child: Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            deletebudho(data2.docs[index].id);
+                                          },
+                                        )
+                                    ],
+                                  ),
                                   SizedBox(
                                     height: 20,
                                   )

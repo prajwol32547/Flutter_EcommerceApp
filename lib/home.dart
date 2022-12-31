@@ -7,11 +7,15 @@ import 'package:prajwol/bottom_navigation_controller.dart';
 import 'package:prajwol/cart.dart';
 import 'package:prajwol/catalogue.dart';
 import 'package:prajwol/firstPage.dart';
+import 'package:prajwol/isAdmin.dart';
 import 'package:prajwol/userProfile.dart';
 
 class Home extends StatelessWidget {
   @override
   bottomNavigationController BNC = Get.put(bottomNavigationController());
+  final Stream<QuerySnapshot> cycle =
+      FirebaseFirestore.instance.collection('Admin').snapshots();
+  final userToken = FirebaseAuth.instance.currentUser?.uid;
   final screens = [
     firstpage(),
     catalogue(),
@@ -61,7 +65,15 @@ class Home extends StatelessWidget {
             ),
           ),
           actions: [
-            Icon(Icons.notifications),
+            isAdmin(userToken)
+                ? InkWell(
+                    child: Icon(Icons.add),
+                    onTap: () => Get.toNamed("/uploadProduct"),
+                  )
+                : InkWell(
+                    child: Icon(Icons.notifications),
+                    onTap: null,
+                  ),
             SizedBox(
               width: 20,
             ),

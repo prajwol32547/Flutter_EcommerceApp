@@ -50,6 +50,12 @@ class productDisplay extends StatelessWidget {
                 Container(
                     height: 100,
                     width: MediaQuery.of(context).size.width,
+                    child: data != null
+                        ? Text("Description:${data![3]}")
+                        : Text("Null value")),
+                Container(
+                    height: 100,
+                    width: MediaQuery.of(context).size.width,
                     child: Text("Ratings:5"))
               ]),
             ),
