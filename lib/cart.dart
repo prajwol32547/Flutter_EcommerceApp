@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prajwol/Btn.dart';
+import 'package:prajwol/checkout_screen.dart';
+import 'package:prajwol/product_display.dart';
 import 'Cart_controller.dart';
 
 class cart extends StatelessWidget {
+  @override
   final Cart_controller c = Get.put(Cart_controller());
   final Stream<QuerySnapshot> cartdb = FirebaseFirestore.instance
       .collection('cart')
@@ -13,11 +17,29 @@ class cart extends StatelessWidget {
       .snapshots();
 
   int amount = 0;
+  List newprice = <int>[];
+  var a;
+  var passamt;
 
   sum() {
+    newprice.clear();
+    passamt = 0;
+    a = 0;
+    amount = 0;
     FirebaseFirestore.instance.collection('cart').get().then((value) => {
           value.docs.forEach((element) {
-            print(element.data().toString());
+            a = element.data()['price'];
+
+            newprice.add(a);
+            for (int b in newprice) {
+              amount = amount + b;
+            }
+            passamt = amount - newprice[0];
+            Get.to(checkout_screen(), arguments: [passamt]);
+            passamt = 0;
+            newprice.clear();
+            a = 0;
+            amount = 0;
           })
         });
   }
@@ -122,5 +144,11 @@ class cart extends StatelessWidget {
   void delete(id) {
     FirebaseFirestore.instance.collection('cart').doc(id).delete();
     print("deleted");
+  }
+
+  Future<void> makepayment() async {
+    try {} catch (e) {
+      print(e);
+    }
   }
 }
