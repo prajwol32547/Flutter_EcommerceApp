@@ -11,7 +11,7 @@ import 'product_display.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey =
-      "pk_test_51MA2VISAQSa9VQdPudybn7v1lAguuXCufoKlXl9wtZvc2NEgwtZzc3mdrxjvrxpiswZvlfMG6NaHXvoQI4d60iQv00KRtSgvTt";
+      "pk_test_51MQDM6KWlepehOjh7yoIAkQH2sUMds7oWzbIVlQ7ACISqdDnA33ukRRkj0geQGzDmmOUFDnTxrFoKpKX3QIMJZzF00xQpRZHM2";
   await Firebase.initializeApp();
   runApp(GetMaterialApp(
       debugShowCheckedModeBanner: false,

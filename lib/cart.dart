@@ -5,43 +5,64 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prajwol/Btn.dart';
 import 'package:prajwol/checkout_screen.dart';
+import 'package:prajwol/paymentSuccess.dart';
 import 'package:prajwol/product_display.dart';
 import 'Cart_controller.dart';
 
-class cart extends StatelessWidget {
+class products {
+  String? image;
+  String? name;
+  int? price;
+
+  products(String image, String name, int price) {
+    this.image = image;
+    this.name = name;
+    this.price = price;
+  }
+}
+
+class cart extends StatefulWidget {
+  @override
+  State<cart> createState() => _cartState();
+}
+
+class _cartState extends State<cart> {
+  void initState() {
+    super.initState();
+    setState(() {
+      amount = 0;
+    });
+    products = [];
+  }
+
   @override
   final Cart_controller c = Get.put(Cart_controller());
+
   final Stream<QuerySnapshot> cartdb = FirebaseFirestore.instance
       .collection('cart')
       .where('uid', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .snapshots();
+  late List<List<dynamic>> products;
+  late double amount = 0.0;
+  Map<String, dynamic>? paymentIntent;
+  Future<double> calculateTotalPrice() async {
+    double totalPrice = 0;
+    var querySnapshot =
+        await FirebaseFirestore.instance.collection('cart').get();
+    querySnapshot.docs.forEach((element) {
+      totalPrice += element.data()['price'];
+    });
+    setState(() {
+      amount = totalPrice;
+    });
+    return totalPrice;
+    print(products);
+  }
 
-  int amount = 0;
-  List newprice = <int>[];
-  var a;
-  var passamt;
-
-  sum() {
-    newprice.clear();
-    passamt = 0;
-    a = 0;
-    amount = 0;
-    FirebaseFirestore.instance.collection('cart').get().then((value) => {
-          value.docs.forEach((element) {
-            a = element.data()['price'];
-
-            newprice.add(a);
-            for (int b in newprice) {
-              amount = amount + b;
-            }
-            passamt = amount - newprice[0];
-            Get.to(checkout_screen(), arguments: [passamt]);
-            passamt = 0;
-            newprice.clear();
-            a = 0;
-            amount = 0;
-          })
-        });
+  void navigateToCheckoutScreen() {
+    calculateTotalPrice().then((totalPrice) {
+      Get.to(checkout_screen(), arguments: [totalPrice, products]);
+    });
   }
 
   @override
@@ -79,9 +100,15 @@ class cart extends StatelessWidget {
                     return ListView.builder(
                         itemCount: cartData.size,
                         itemBuilder: (BuildContext context, int index) {
+                          products = List.generate(
+                              cartData.size, (index) => List.filled(3, 0),
+                              growable: false);
                           final String img = cartData.docs[index]['image'];
                           final String name = cartData.docs[index]['name'];
                           final int price = cartData.docs[index]['price'];
+                          products[index][0] = img;
+                          products[index][1] = name;
+                          products[index][2] = price;
 
                           return Container(
                             margin: EdgeInsets.fromLTRB(5.0, 5.0, 15.0, 15.0),
@@ -121,19 +148,16 @@ class cart extends StatelessWidget {
             ),
           ),
           Container(
-            width: MediaQuery.of(context).size.width,
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text("Total amount : ${amount}"),
-                  TextButton(
-                      onPressed: () {
-                        sum();
-                      },
-                      child: Text("Checkout"))
-                ],
-              ),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width - 40,
+              child: TextButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.red)),
+                  onPressed: () {
+                    // navigateToCheckoutScreen();
+                    addOrder(products);
+                  },
+                  child: Text("Checkout")),
             ),
           )
         ],
